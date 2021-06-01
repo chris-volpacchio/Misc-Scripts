@@ -15,26 +15,7 @@ print(Input_Data.head(5))',
 @output_data_1_name =N'Output_Data';
 --WITH RESULT SETS ((ProductId INT, ProductName VARCHAR(100), Price MONEY);
 
-import pyodbc 
-conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DB05.petvetcarecenters.com\BETA,1435;'
-                      'Database=[PetVet].[dbo].[DEF_Location];'
-                      'Trusted_Connection=yes;')
 
-cursor = conn.cursor()
-
-cursor.execute('''
-
-               CREATE TABLE People
-               (
-               Name nvarchar(50),
-               Age int,
-               City nvarchar(50)
-               )
-
-               ''')
-
-conn.commit()
 
 
 ---------
@@ -96,7 +77,7 @@ print(Input_Data.head(5))
 --------
 --------------
 -------------
-
+---  ---
 EXEC sp_execute_external_script @language = N'Python',
 @script = N'
 import pyodbc 
@@ -115,14 +96,16 @@ for record in data:
     records.append(list(record))
 
 columns = [i[0] for i in cursor.description]
-';, 
+', 
 @input_data_1 = N'select top 5 * from stage_DVMReport_Revenue',
 @input_data_1_name = N'Input_Data',
 @output_data_1_name =N'Output_Data';
 
 
 ---------
-
+-----
+--------
+--- Success --
 DECLARE @Input_Query NVARCHAR(MAX) = N'select * from [PetVet].[dbo].[stage_DVMReport_Revenue]';
 EXEC sp_execute_external_script @language = N'Python',
 @script = N'
@@ -132,8 +115,8 @@ print(pd.DataFrame(Input_Data))
 ', 
 @input_data_1 = @Input_Query,
 @input_data_1_name = N'Input_Data',
-@output_data_1_name =N'Output_Data'
-with result sets();
+@output_data_1_name =N'Output_Data';
+--with result sets();
 
 ---------
 ----------
@@ -142,14 +125,13 @@ DECLARE @Input_Query NVARCHAR(MAX) = N'select * from [PetVet].[dbo].[stage_DVMRe
 EXEC sp_execute_external_script @language = N'Python',
 @script = N'
 import pandas as pd
-
-import pyodbc 
-conn = pyodbc.connect("Driver={SQL Server};"
-                      "Server=db04.petvetcarecenters.com;"
-                      "Database=Dayforce;"
-                      "Trusted_Connection=yes;"
-                     )
-cursor = conn.cursor()
+import pymssql
+conn = pymssql.connect(server='db04.petvetcarecenters.com', 
+                       user='CVOLPACCHIO-D-5\CVolpacchio', 
+                       #password=str(pd.read_csv('c:/Users/CVolpacchio/Documents/pw.txt')), 
+                       password = pw,
+                       database='Dayforce')
+cursor = conn.cursor()  
 cursor.execute("""SELECT distinct [ID]
       ,[Pay_Group_Name]
       ,[Register_History_Record_Type_Code_Name]
@@ -159,26 +141,20 @@ cursor.execute("""SELECT distinct [ID]
       ,[Pay_Type]
       ,[Expense_Type]
       ,[Expense_Code]
-      ,cast([Amount] as float)
+      
       ,[Pay_Date]
       ,[Period_Start]
       ,[Period_End]
       ,[Pay_Period]
-      ,cast([Hours] as float) 
+       
       ,[PSID]
       ,[Location]
       ,[Position]
       ,[Department]
-      ,[Extraction_DT] from [Dayforce].[dbo].[JournalEntryReportWOutDebitandCredit]""")
-data = cursor.fetchall()
-records = []
-for record in data:
-    records.append(list(record))
-columns = [i[0] for i in cursor.description]
-wages = pd.DataFrame(records,columns = columns)
-wages.drop_duplicates(inplace=True)
-
-Output_Data = wages
+      ,[Extraction_DT] from [Dayforce].[dbo].[JournalEntryReportWOutDebitandCredit];""")  
+row = cursor.fetchall()
+columns_ = [i[0] for i in cursor.description]
+pd.DataFrame(row, columns=columns_)
 ', 
 @input_data_1 = @Input_Query,
 @input_data_1_name = N'Input_Data',
@@ -201,5 +177,33 @@ ALTER TABLE [PetVet].[dbo].[stage_DVMReport_Revenue]
    ALTER COLUMN TargetRev float
 
 
+----------
+--------
+---   ----
+------
+-----
+DECLARE @Input_Query NVARCHAR(MAX) = N'select * from [DB05.PETVETCARECENTERS.COM\BETA,1435].[PetVet].[dbo].[stage_DVMReport_Revenue]';
+EXEC sp_execute_external_script @language = N'Python',
+@script = N'
+import pyodbc 
+conn = pyodbc.connect("Driver={SQL Server};"
+                      "Server=DB05.petvetcarecenters.com\BETA,1435;"
+                      "Database=PetVet;"
+                      "Trusted_Connection=yes;"
+                      
+                     )
 
+cursor = conn.cursor()
+cursor.execute("""SELECT top 5 * from [PetVet].[dbo].[stage_DVMReport_Revenue]""")
+data = cursor.fetchall()
+
+records = []
+for record in data:
+    records.append(list(record))
+
+columns = [i[0] for i in cursor.description]
+', 
+@input_data_1 = @Input_Query,
+@input_data_1_name = N'Input_Data',
+@output_data_1_name =N'Output_Data';
 
