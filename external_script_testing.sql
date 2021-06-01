@@ -121,44 +121,46 @@ print(pd.DataFrame(Input_Data))
 ---------
 ----------
 
-DECLARE @Input_Query NVARCHAR(MAX) = N'select * from [PetVet].[dbo].[stage_DVMReport_Revenue]';
-EXEC sp_execute_external_script @language = N'Python',
-@script = N'
-import pandas as pd
-import pymssql
-conn = pymssql.connect(server='db04.petvetcarecenters.com', 
-                       user='CVOLPACCHIO-D-5\CVolpacchio', 
-                       #password=str(pd.read_csv('c:/Users/CVolpacchio/Documents/pw.txt')), 
-                       password = pw,
-                       database='Dayforce')
-cursor = conn.cursor()  
-cursor.execute("""SELECT distinct [ID]
-      ,[Pay_Group_Name]
-      ,[Register_History_Record_Type_Code_Name]
-      ,[Legal_Entity]
-      ,[Employee_Name]
-      ,[Employee_Number]
-      ,[Pay_Type]
-      ,[Expense_Type]
-      ,[Expense_Code]
+
+-- --- change field type for 2 numeric cols in wage tbl
+-- DECLARE @Input_Query NVARCHAR(MAX) = N'select * from [PetVet].[dbo].[stage_DVMReport_Revenue]';
+-- EXEC sp_execute_external_script @language = N'Python',
+-- @script = N'
+-- import pandas as pd
+-- import pymssql
+-- conn = pymssql.connect(server='db04.petvetcarecenters.com', 
+--                        user='CVOLPACCHIO-D-5\CVolpacchio', 
+--                        #password=str(pd.read_csv('c:/Users/CVolpacchio/Documents/pw.txt')), 
+--                        password = pw,
+--                        database='Dayforce')
+-- cursor = conn.cursor()  
+-- cursor.execute("""SELECT distinct [ID]
+--       ,[Pay_Group_Name]
+--       ,[Register_History_Record_Type_Code_Name]
+--       ,[Legal_Entity]
+--       ,[Employee_Name]
+--       ,[Employee_Number]
+--       ,[Pay_Type]
+--       ,[Expense_Type]
+--       ,[Expense_Code]
       
-      ,[Pay_Date]
-      ,[Period_Start]
-      ,[Period_End]
-      ,[Pay_Period]
+--       ,[Pay_Date]
+--       ,[Period_Start]
+--       ,[Period_End]
+--       ,[Pay_Period]
        
-      ,[PSID]
-      ,[Location]
-      ,[Position]
-      ,[Department]
-      ,[Extraction_DT] from [Dayforce].[dbo].[JournalEntryReportWOutDebitandCredit];""")  
-row = cursor.fetchall()
-columns_ = [i[0] for i in cursor.description]
-pd.DataFrame(row, columns=columns_)
-', 
-@input_data_1 = @Input_Query,
-@input_data_1_name = N'Input_Data',
-@output_data_1_name =N'Output_Data';
+--       ,[PSID]
+--       ,[Location]
+--       ,[Position]
+--       ,[Department]
+--       ,[Extraction_DT] from [Dayforce].[dbo].[JournalEntryReportWOutDebitandCredit];""")  
+-- row = cursor.fetchall()
+-- columns_ = [i[0] for i in cursor.description]
+-- pd.DataFrame(row, columns=columns_)
+-- ', 
+-- @input_data_1 = @Input_Query,
+-- @input_data_1_name = N'Input_Data',
+-- @output_data_1_name =N'Output_Data';
 
 
 
