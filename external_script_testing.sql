@@ -1,3 +1,15 @@
+
+-----
+
+
+
+-- will ultimately use master table as singular input query w/ singular table output to feed twb
+
+
+
+-----
+
+
 EXECUTE sp_execute_external_script
 @language = N'Python',
 @script = N'
