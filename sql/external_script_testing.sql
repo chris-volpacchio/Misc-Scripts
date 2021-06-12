@@ -1,6 +1,6 @@
 
------
-
+-------------------
+-- Taking route of connecting to sqlserver externally & running scripts through task mgr
 
 
 -- will ultimately use master table as singular input query w/ singular table output to feed twb
@@ -26,8 +26,6 @@ print(Input_Data.head(5))',
 @input_data_1_name = N'Input_Data',
 @output_data_1_name =N'Output_Data';
 --WITH RESULT SETS ((ProductId INT, ProductName VARCHAR(100), Price MONEY);
-
-
 
 
 ---------
